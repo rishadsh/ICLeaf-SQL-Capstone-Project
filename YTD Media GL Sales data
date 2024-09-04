@@ -1,0 +1,54 @@
+Drop table if exists ASIN_list;
+Create temp table ASIN_list as
+
+(
+
+
+SELECT 
+a.asin,
+a.item_name,
+a.street_day,
+a.publication_day,
+a.gl_product_group,
+a.gl_product_group_desc,
+d.owning_vendor_code,
+d.owning_vendor_name
+
+
+
+FROM andes.booker.d_mp_ASINs a LEFT JOIN andes.booker.d_mp_ASIN_Manufacturer d 
+On a.asin = d.asin 
+
+
+
+
+WHERE 
+ d.REGION_ID = 1
+AND d.MARKETPLACE_ID = 7
+AND a.REGION_ID = 1
+AND a.MARKETPLACE_ID = 7
+AND ((a.street_day between TO_DATE (CURRENT_DATE, 'YYYY/MM/DD') +1 and TO_DATE(CURRENT_DATE, 'YYYY/MM/DD') + 1000) or 
+    (a.publication_day BETWEEN TO_DATE(CURRENT_DATE, 'YYYY/MM/DD') +1 and TO_DATE(CURRENT_DATE, 'YYYY/MM/DD') + 1000))
+AND d.owning_vendor_code IN ('DSTI7')
+-- AND a.asin IN ()
+
+); 
+
+
+-- create temp table orders as (
+
+select a.asin,b.item_name,a.order_day,b.street_day,b.publication_day,
+SUM(a.quantity) as total_order
+
+from andes.booker.d_unified_customer_order_items a join ASIN_list b on a.asin= b.asin
+
+where a.region_id = 1
+and a.marketplace_id = 7
+and a.order_item_level_condition IN (3,4)
+and a.quantity >=0
+and a.merchant_customer_id = '13' 
+AND a.order_day < b.street_day
+and a.asin in ( select ASIN from ASIN_list)
+
+group by 
+a.asin,b.item_name,a.order_day,b.street_day,b.publication_day
