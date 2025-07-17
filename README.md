@@ -20,7 +20,7 @@ a) Retrieve a list of books currently borrowed by a specific member.
 b) Find members who have overdue books (borrowed more than 30 days ago, not
 returned).
 c) Retrieve books by genre along with the count of available copies.
-d) Find the most borrowed book(s) overall.
+d) Find the most borrowed book(s) overall
 e) Retrieve members who have borrowed books from at least three different genres.
 Reporting and Analytics:
 a) Calculate the total number of books borrowed per month.
